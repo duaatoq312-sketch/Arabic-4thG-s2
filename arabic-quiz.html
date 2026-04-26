@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار اللغة العربية - الصف الرابع</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --pink:#FF6EB4;--pink-light:#FFD6EC;--pink-dark:#C73F8A;
+    --purple:#9B59B6;--purple-light:#E8D5F5;
+    --yellow:#FFD700;--green:#2ECC71;--red:#E74C3C;
+    --sky:#87CEEB;--bg:#FFF0F8;
+    --card:#FFFFFF;--text:#3D1A4E;--muted:#9B7BAE;
+  }
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+  /* Stars background */
+  .stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+  .star{position:absolute;border-radius:50%;background:var(--pink);animation:twinkle 2s infinite alternate}
+  @keyframes twinkle{0%{opacity:.2;transform:scale(1)}100%{opacity:.8;transform:scale(1.4)}}
+
+  /* Screens */
+  .screen{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+  .hidden{display:none!important}
+
+  /* Girl character */
+  .girl-wrap{margin-bottom:1rem;animation:bounce 1.5s infinite alternate}
+  @keyframes bounce{0%{transform:translateY(0)}100%{transform:translateY(-12px)}}
+  .speech-bubble{background:white;border:3px solid var(--pink);border-radius:20px;padding:.8rem 1.4rem;font-size:1.3rem;font-weight:700;color:var(--pink-dark);max-width:320px;margin:.5rem auto 1rem;position:relative;box-shadow:0 4px 16px rgba(255,110,180,.25)}
+  .speech-bubble::after{content:'';position:absolute;bottom:-16px;right:50%;transform:translateX(50%);border:8px solid transparent;border-top-color:var(--pink)}
+
+  /* Buttons */
+  .btn{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--purple));color:white;border:none;border-radius:50px;padding:.85rem 2.5rem;font-size:1.2rem;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(155,89,182,.35);transition:transform .15s,box-shadow .15s;margin:.5rem}
+  .btn:hover{transform:scale(1.05);box-shadow:0 6px 24px rgba(155,89,182,.45)}
+  .btn:active{transform:scale(.97)}
+  .btn.green{background:linear-gradient(135deg,#2ECC71,#1A9955)}
+  .btn.red{background:linear-gradient(135deg,#E74C3C,#A93226)}
+
+  /* Title screen */
+  #screen-intro h1{font-size:2.2rem;font-weight:800;color:var(--pink-dark);margin-bottom:.3rem;text-shadow:0 2px 8px rgba(199,63,138,.2)}
+  #screen-intro h2{font-size:1.1rem;font-weight:500;color:var(--muted);margin-bottom:1.5rem}
+  .topic-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;margin-bottom:1.5rem}
+  .pill{background:var(--pink-light);color:var(--pink-dark);border-radius:50px;padding:.4rem 1rem;font-size:.85rem;font-weight:600}
+
+  /* Quiz screen */
+  #screen-quiz{justify-content:flex-start;padding-top:1.5rem}
+  .quiz-header{width:100%;max-width:720px;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:1rem}
+  .progress-wrap{flex:1;height:12px;background:#F0D0E8;border-radius:10px;overflow:hidden}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--pink),var(--purple));border-radius:10px;transition:width .4s ease}
+  .timer-box{background:white;border:2.5px solid var(--pink);border-radius:14px;padding:.4rem .9rem;font-size:1.3rem;font-weight:800;color:var(--pink-dark);min-width:76px;text-align:center;box-shadow:0 2px 8px rgba(255,110,180,.2)}
+  .timer-box.urgent{border-color:var(--red);color:var(--red);animation:pulse .5s infinite alternate}
+  @keyframes pulse{0%{transform:scale(1)}100%{transform:scale(1.06)}}
+  .q-num{font-size:.9rem;font-weight:600;color:var(--muted);white-space:nowrap}
+
+  .question-card{background:white;border-radius:24px;padding:1.6rem 1.8rem;max-width:720px;width:100%;box-shadow:0 4px 24px rgba(155,89,182,.12);margin-bottom:1rem;border:2px solid var(--pink-light)}
+  .topic-tag{display:inline-block;background:var(--purple-light);color:var(--purple);border-radius:50px;padding:.25rem .85rem;font-size:.8rem;font-weight:700;margin-bottom:.8rem}
+  .question-text{font-size:1.25rem;font-weight:700;color:var(--text);line-height:1.7;margin-bottom:1.2rem}
+
+  .choices{display:flex;flex-direction:column;gap:.65rem;width:100%;max-width:720px}
+  .choice{background:white;border:2.5px solid #E8D5F5;border-radius:16px;padding:.85rem 1.2rem;font-size:1.1rem;font-weight:600;cursor:pointer;text-align:right;transition:border-color .2s,background .2s,transform .15s;color:var(--text);width:100%;font-family:'Tajawal',sans-serif}
+  .choice:hover:not(:disabled){border-color:var(--pink);background:var(--pink-light);transform:translateX(-4px)}
+  .choice.correct{background:#D5F5E3;border-color:var(--green)!important;color:#1A7A44}
+  .choice.wrong{background:#FADBD8;border-color:var(--red)!important;color:#922B21}
+  .choice:disabled{cursor:default}
+
+  .feedback{font-size:1rem;font-weight:700;padding:.5rem 0;min-height:1.8rem;color:var(--green)}
+  .feedback.wrong{color:var(--red)}
+
+  .nav-row{display:flex;justify-content:center;gap:1rem;margin-top:.5rem}
+
+  /* Result screen */
+  #screen-result h2{font-size:2rem;font-weight:800;color:var(--pink-dark);margin-bottom:.5rem}
+  .score-circle{width:140px;height:140px;border-radius:50%;border:6px solid var(--pink);display:flex;flex-direction:column;align-items:center;justify-content:center;background:white;box-shadow:0 4px 24px rgba(255,110,180,.25);margin:1rem auto}
+  .score-circle span{font-size:2.4rem;font-weight:800;color:var(--pink-dark)}
+  .score-circle small{font-size:.95rem;color:var(--muted);font-weight:600}
+  .result-msg{font-size:1.1rem;font-weight:600;color:var(--text);margin:.8rem 0 1.5rem}
+
+  /* Music toggle */
+  .music-btn{position:fixed;bottom:1.2rem;left:1.2rem;z-index:100;background:white;border:2.5px solid var(--pink);border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:pointer;box-shadow:0 2px 10px rgba(255,110,180,.3);transition:transform .2s}
+  .music-btn:hover{transform:scale(1.1)}
+
+  /* Animations */
+  .pop{animation:pop .35s cubic-bezier(.36,.07,.19,.97)}
+  @keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+
+  @media(max-width:500px){
+    #screen-intro h1{font-size:1.6rem}
+    .question-text{font-size:1.1rem}
+    .choice{font-size:1rem;padding:.75rem 1rem}
+    .speech-bubble{font-size:1.1rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Music toggle -->
+<button class="music-btn" id="musicToggle" title="تشغيل/إيقاف الموسيقى">🎵</button>
+
+<!-- Hidden audio -->
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" type="audio/mpeg">
+</audio>
+<audio id="correctSfx" src="data:audio/wav;base64,UklGRnQCAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YVACAAAAAAA="></audio>
+
+<!-- SCREEN 1: Intro -->
+<div class="screen" id="screen-intro">
+  <div class="girl-wrap">
+    <svg width="140" height="190" viewBox="0 0 140 190" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hair ponytail at back -->
+      <ellipse cx="110" cy="58" rx="14" ry="28" fill="#3D1A0A" transform="rotate(-20,110,58)"/>
+      <circle cx="115" cy="38" r="7" fill="#FF6EB4"/>
+      <!-- Body dress -->
+      <ellipse cx="70" cy="145" rx="32" ry="38" fill="#FF6EB4"/>
+      <!-- Collar -->
+      <ellipse cx="70" cy="112" rx="16" ry="8" fill="#FF9FD0"/>
+      <!-- Arms -->
+      <ellipse cx="35" cy="135" rx="10" ry="22" fill="#FF9FD0" transform="rotate(15,35,135)"/>
+      <ellipse cx="105" cy="135" rx="10" ry="22" fill="#FF9FD0" transform="rotate(-15,105,135)"/>
+      <!-- Wave hand -->
+      <circle cx="33" cy="158" r="9" fill="#FFDAB9"/>
+      <!-- Legs -->
+      <rect x="52" y="178" width="14" height="12" rx="5" fill="#9B59B6"/>
+      <rect x="74" y="178" width="14" height="12" rx="5" fill="#9B59B6"/>
+      <!-- Shoes -->
+      <ellipse cx="59" cy="191" rx="10" ry="5" fill="#C73F8A"/>
+      <ellipse cx="81" cy="191" rx="10" ry="5" fill="#C73F8A"/>
+      <!-- Head -->
+      <circle cx="70" cy="70" r="34" fill="#FFDAB9"/>
+      <!-- Hair top -->
+      <ellipse cx="70" cy="46" rx="34" ry="22" fill="#3D1A0A"/>
+      <!-- Hair side bangs -->
+      <ellipse cx="42" cy="65" rx="10" ry="18" fill="#3D1A0A"/>
+      <!-- Ponytail top -->
+      <ellipse cx="97" cy="50" rx="10" ry="22" fill="#3D1A0A" transform="rotate(-30,97,50)"/>
+      <!-- Ponytail ribbon -->
+      <circle cx="101" cy="44" r="8" fill="#FF6EB4"/>
+      <!-- Eyes -->
+      <ellipse cx="58" cy="68" rx="6" ry="7" fill="white"/>
+      <ellipse cx="82" cy="68" rx="6" ry="7" fill="white"/>
+      <circle cx="59" cy="69" r="4" fill="#3D1A0A"/>
+      <circle cx="83" cy="69" r="4" fill="#3D1A0A"/>
+      <!-- Shine -->
+      <circle cx="61" cy="67" r="1.5" fill="white"/>
+      <circle cx="85" cy="67" r="1.5" fill="white"/>
+      <!-- Eyelashes -->
+      <line x1="54" y1="62" x2="52" y2="59" stroke="#3D1A0A" stroke-width="1.5"/>
+      <line x1="58" y1="61" x2="58" y2="58" stroke="#3D1A0A" stroke-width="1.5"/>
+      <line x1="62" y1="62" x2="64" y2="59" stroke="#3D1A0A" stroke-width="1.5"/>
+      <line x1="78" y1="62" x2="76" y2="59" stroke="#3D1A0A" stroke-width="1.5"/>
+      <line x1="82" y1="61" x2="82" y2="58" stroke="#3D1A0A" stroke-width="1.5"/>
+      <line x1="86" y1="62" x2="88" y2="59" stroke="#3D1A0A" stroke-width="1.5"/>
+      <!-- Blush -->
+      <ellipse cx="48" cy="76" rx="7" ry="4" fill="#FFB3D1" opacity=".6"/>
+      <ellipse cx="92" cy="76" rx="7" ry="4" fill="#FFB3D1" opacity=".6"/>
+      <!-- Smile -->
+      <path d="M62 82 Q70 90 78 82" stroke="#C73F8A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Nose -->
+      <ellipse cx="70" cy="77" rx="2.5" ry="2" fill="#F0B090"/>
+    </svg>
+  </div>
+  <div class="speech-bubble">أهلاً وسهلاً! 🌸 أنا هنا لأساعدك في اختبارك اليوم!</div>
+  <h1>🌟 اختبار اللغة العربية 🌟</h1>
+  <h2>الصف الرابع الابتدائي</h2>
+  <div class="topic-pills">
+    <span class="pill">كلمات رسمها يختلف عن نطقها</span>
+    <span class="pill">إسناد الفعل المضارع إلى الضمائر</span>
+    <span class="pill">الهمزة المتطرفة</span>
+  </div>
+  <p style="color:var(--muted);font-size:.95rem;margin-bottom:1.2rem">⏱️ مدة الاختبار: <strong>7 دقائق</strong> &nbsp;|&nbsp; 15 سؤالاً &nbsp;|&nbsp; اختر الإجابة الصحيحة</p>
+  <button class="btn" onclick="startQuiz()">🚀 ابدأ الاختبار!</button>
+</div>
+
+<!-- SCREEN 2: Quiz -->
+<div class="screen hidden" id="screen-quiz">
+  <div class="quiz-header">
+    <div class="q-num" id="qNum">سؤال 1 / 15</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+    <div class="timer-box" id="timerBox">7:00</div>
+  </div>
+  <div class="question-card pop" id="questionCard">
+    <div class="topic-tag" id="topicTag"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="feedback" id="feedbackText"></div>
+  </div>
+  <div class="choices" id="choicesWrap"></div>
+  <div class="nav-row">
+    <button class="btn hidden" id="nextBtn" onclick="nextQuestion()">التالي ←</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: Result -->
+<div class="screen hidden" id="screen-result">
+  <div class="girl-wrap" id="resultGirl">
+    <svg width="140" height="190" viewBox="0 0 140 190" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="110" cy="58" rx="14" ry="28" fill="#3D1A0A" transform="rotate(-20,110,58)"/>
+      <circle cx="115" cy="38" r="7" fill="#FF6EB4"/>
+      <ellipse cx="70" cy="145" rx="32" ry="38" fill="#9B59B6"/>
+      <ellipse cx="70" cy="112" rx="16" ry="8" fill="#C39BD3"/>
+      <ellipse cx="35" cy="132" rx="10" ry="22" fill="#FFDAB9" transform="rotate(10,35,132)"/>
+      <ellipse cx="105" cy="132" rx="10" ry="22" fill="#FFDAB9" transform="rotate(-10,105,132)"/>
+      <rect x="52" y="178" width="14" height="12" rx="5" fill="#FF6EB4"/>
+      <rect x="74" y="178" width="14" height="12" rx="5" fill="#FF6EB4"/>
+      <ellipse cx="59" cy="191" rx="10" ry="5" fill="#C73F8A"/>
+      <ellipse cx="81" cy="191" rx="10" ry="5" fill="#C73F8A"/>
+      <circle cx="70" cy="70" r="34" fill="#FFDAB9"/>
+      <ellipse cx="70" cy="46" rx="34" ry="22" fill="#3D1A0A"/>
+      <ellipse cx="42" cy="65" rx="10" ry="18" fill="#3D1A0A"/>
+      <ellipse cx="97" cy="50" rx="10" ry="22" fill="#3D1A0A" transform="rotate(-30,97,50)"/>
+      <circle cx="101" cy="44" r="8" fill="#9B59B6"/>
+      <ellipse cx="58" cy="68" rx="6" ry="7" fill="white"/>
+      <ellipse cx="82" cy="68" rx="6" ry="7" fill="white"/>
+      <circle cx="59" cy="69" r="4" fill="#3D1A0A"/>
+      <circle cx="83" cy="69" r="4" fill="#3D1A0A"/>
+      <circle cx="61" cy="67" r="1.5" fill="white"/>
+      <circle cx="85" cy="67" r="1.5" fill="white"/>
+      <ellipse cx="48" cy="76" rx="7" ry="4" fill="#FFB3D1" opacity=".6"/>
+      <ellipse cx="92" cy="76" rx="7" ry="4" fill="#FFB3D1" opacity=".6"/>
+      <!-- Big smile -->
+      <path d="M58 80 Q70 94 82 80" stroke="#C73F8A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="70" cy="77" rx="2.5" ry="2" fill="#F0B090"/>
+      <!-- Stars above head -->
+      <text x="15" y="40" font-size="18" fill="#FFD700">⭐</text>
+      <text x="105" y="30" font-size="18" fill="#FFD700">⭐</text>
+      <text x="55" y="15" font-size="18" fill="#FFD700">⭐</text>
+    </svg>
+  </div>
+  <div class="speech-bubble" id="goodbyeMsg">رائع! لقد أنهيت الاختبار! 🌟</div>
+  <h2>نتيجة اختبارك</h2>
+  <div class="score-circle">
+    <span id="scoreNum">0</span>
+    <small>من 15</small>
+  </div>
+  <div class="result-msg" id="resultMsg"></div>
+  <button class="btn" onclick="restartQuiz()">🔄 أعد الاختبار</button>
+</div>
+
+<script>
+// ===== STARS =====
+(function(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<28;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*6+3;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s`;
+    c.appendChild(s);
+  }
+})();
+
+// ===== QUESTIONS =====
+const questions=[
+  // كلمات رسمها يختلف عن نطقها (5 أسئلة)
+  {topic:'كلمات رسمها يختلف عن نطقها',q:'ما الكلمة التي تُكتب بالواو ولكن تُنطق بالألف؟',choices:['صَلاة','سَلام','كِتاب','قَلَم'],ans:0},
+  {topic:'كلمات رسمها يختلف عن نطقها',q:'كيف تُنطق كلمة "الرحمن"؟',choices:['الرَّحمَان','الرَّحمَن','الراحمان','الرُّحمَن'],ans:0},
+  {topic:'كلمات رسمها يختلف عن نطقها',q:'في كلمة "ذلك" ما الحرف الذي لا يُنطق؟',choices:['الذال','اللام','الكاف','لا يوجد'],ans:1},
+  {topic:'كلمات رسمها يختلف عن نطقها',q:'كلمة "هذا" — كم حرفاً تُكتب؟',choices:['حرفان','ثلاثة أحرف','أربعة أحرف','خمسة أحرف'],ans:2},
+  {topic:'كلمات رسمها يختلف عن نطقها',q:'ما الكلمة التي تُكتب بألف لينة (ى) وتُنطق كأنها ألف مفتوحة؟',choices:['يَرمي','يَدعو','فَتى','كَتَبَ'],ans:2},
+
+  // إسناد الفعل المضارع إلى الضمائر (5 أسئلة)
+  {topic:'إسناد الفعل المضارع إلى الضمائر',q:'ما الصواب في إسناد الفعل "يَلعَب" إلى ضمير "أنتِ"؟',choices:['تَلعَبينَ','يَلعَبينَ','تَلعَبانِ','يَلعَبانِ'],ans:0},
+  {topic:'إسناد الفعل المضارع إلى الضمائر',q:'أسنِد الفعل "يَكتُب" إلى ضمير "هما" (مثنى مؤنث):',choices:['تَكتُبانِ','يَكتُبانِ','تَكتُبونَ','يَكتُبونَ'],ans:0},
+  {topic:'إسناد الفعل المضارع إلى الضمائر',q:'أيهما صحيح مع ضمير "نحن"؟',choices:['أَكتُبُ','يَكتُبونَ','نَكتُبُ','تَكتُبانِ'],ans:2},
+  {topic:'إسناد الفعل المضارع إلى الضمائر',q:'ما المضارع المسند إلى "هم" من فعل "قَرَأَ"؟',choices:['يَقرَؤونَ','تَقرَؤونَ','يَقرَآنِ','تَقرَآنِ'],ans:0},
+  {topic:'إسناد الفعل المضارع إلى الضمائر',q:'أسنِد "يَذهَب" إلى "أنتم":',choices:['يَذهَبونَ','تَذهَبونَ','تَذهَبينَ','يَذهَبانِ'],ans:1},
+
+  // الهمزة المتطرفة (5 أسئلة)
+  {topic:'الهمزة المتطرفة',q:'ما رسم الهمزة المتطرفة في كلمة "يَقرَأ"؟',choices:['على الألف','على الواو','على السطر','على الياء'],ans:0},
+  {topic:'كلمات رسمها يختلف عن نطقها',q:'ما رسم الهمزة في كلمة "يَلجَأ"؟',choices:['على الألف','على الياء','على السطر','على الواو'],ans:0},
+  {topic:'الهمزة المتطرفة',q:'كيف تُكتب الهمزة المتطرفة في كلمة "مَلجَـ___" إذا كان الحرف قبلها مكسوراً؟',choices:['مَلجِئ','مَلجِء','مَلجِأ','مَلجِؤ'],ans:0},
+  {topic:'الهمزة المتطرفة',q:'في كلمة "ضَوء" على أيّ حرف تُكتب الهمزة؟',choices:['على الواو','على السطر','على الياء','على الألف'],ans:1},
+  {topic:'الهمزة المتطرفة',q:'أيّ الكلمات التالية فيها همزة متطرفة على الياء (ئ)؟',choices:['شَيء','بطيء','سَماء','هَدوء'],ans:1},
+];
+
+// ===== STATE =====
+let cur=0,score=0,timer=420,timerInterval=null,answered=false;
+
+// ===== MUSIC =====
+const music=document.getElementById('bgMusic');
+let musicOn=false;
+document.getElementById('musicToggle').addEventListener('click',()=>{
+  musicOn=!musicOn;
+  if(musicOn){music.play().catch(()=>{});document.getElementById('musicToggle').textContent='🔇';}
+  else{music.pause();document.getElementById('musicToggle').textContent='🎵';}
+});
+
+// ===== SHOW SCREEN =====
+function show(id){
+  ['screen-intro','screen-quiz','screen-result'].forEach(s=>document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ===== START =====
+function startQuiz(){
+  cur=0;score=0;timer=420;answered=false;
+  if(musicOn)music.play().catch(()=>{});
+  show('screen-quiz');
+  renderQuestion();
+  startTimer();
+}
+
+// ===== TIMER =====
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timer--;
+    const m=Math.floor(timer/60),s=timer%60;
+    const box=document.getElementById('timerBox');
+    box.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    box.classList.toggle('urgent',timer<=60);
+    if(timer<=0){clearInterval(timerInterval);endQuiz();}
+  },1000);
+}
+
+// ===== RENDER QUESTION =====
+function renderQuestion(){
+  const q=questions[cur];
+  document.getElementById('qNum').textContent=`سؤال ${cur+1} / ${questions.length}`;
+  document.getElementById('progressBar').style.width=`${(cur/questions.length)*100}%`;
+  document.getElementById('topicTag').textContent=q.topic;
+  document.getElementById('questionText').textContent=q.q;
+  document.getElementById('feedbackText').textContent='';
+  document.getElementById('feedbackText').className='feedback';
+  const card=document.getElementById('questionCard');
+  card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop');
+
+  const wrap=document.getElementById('choicesWrap');
+  wrap.innerHTML='';
+  q.choices.forEach((c,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice';
+    btn.textContent=(i===0?'أ- ':i===1?'ب- ':i===2?'ج- ':'د- ')+c;
+    btn.onclick=()=>selectAnswer(i,btn);
+    wrap.appendChild(btn);
+  });
+  answered=false;
+  document.getElementById('nextBtn').classList.add('hidden');
+}
+
+// ===== SELECT ANSWER =====
+function selectAnswer(idx,btn){
+  if(answered)return;
+  answered=true;
+  const q=questions[cur];
+  const allBtns=document.querySelectorAll('.choice');
+  allBtns.forEach(b=>b.disabled=true);
+  if(idx===q.ans){
+    btn.classList.add('correct');
+    score++;
+    const fb=document.getElementById('feedbackText');
+    fb.textContent='✅ إجابة صحيحة! رائع!';
+    fb.className='feedback';
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.ans].classList.add('correct');
+    const fb=document.getElementById('feedbackText');
+    fb.textContent='❌ إجابة خاطئة. الإجابة الصحيحة مُلوّنة بالأخضر.';
+    fb.className='feedback wrong';
+  }
+  if(cur<questions.length-1)document.getElementById('nextBtn').classList.remove('hidden');
+  else{
+    const lastBtn=document.createElement('button');
+    lastBtn.className='btn green';lastBtn.textContent='🏁 إنهاء الاختبار';
+    lastBtn.onclick=endQuiz;
+    document.getElementById('nextBtn').replaceWith(lastBtn);
+    document.getElementById('nextBtn')?.classList?.remove('hidden');
+  }
+}
+
+// ===== NEXT =====
+function nextQuestion(){
+  cur++;
+  renderQuestion();
+}
+
+// ===== END =====
+function endQuiz(){
+  clearInterval(timerInterval);
+  if(musicOn)music.pause();
+  document.getElementById('scoreNum').textContent=score;
+  const pct=Math.round((score/questions.length)*100);
+  let msg='';
+  const msgs=[
+    [13,'⭐⭐⭐ ممتاز جداً! أنت نجم اللغة العربية!'],
+    [10,'⭐⭐ أحسنت! عمل رائع!'],
+    [7,'⭐ جيد! يمكنك التحسين أكثر!'],
+    [0,'💪 استمر في التدريب، أنت تستطيع!'],
+  ];
+  for(const[min,m] of msgs){if(score>=min){msg=m;break;}}
+  document.getElementById('resultMsg').textContent=`حصلت على ${score} من ${questions.length} (${pct}٪) — ${msg}`;
+  const bye=score>=10?'رائع! عمل مميز جداً! 🌸👏':'أحسنت المحاولة! حاول مرة أخرى! 💪';
+  document.getElementById('goodbyeMsg').textContent=bye;
+  show('screen-result');
+}
+
+// ===== RESTART =====
+function restartQuiz(){
+  cur=0;score=0;timer=420;answered=false;
+  if(musicOn)music.play().catch(()=>{});
+  show('screen-quiz');
+  renderQuestion();
+  startTimer();
+}
+</script>
+</body>
+</html>
